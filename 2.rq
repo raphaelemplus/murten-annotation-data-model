@@ -14,9 +14,7 @@ SELECT  (COUNT(?mid) as ?level) (GROUP_CONCAT(?mid_rvi_ling_appl_content; separa
   ?mid_rvi_ling_appl crm:P190_has_symbolic_content ?mid_rvi_ling_appl_content.
   ?mid_rvi_appl_assg a <http://murtenannotation.local/ver1/Appellation_Assignment>.
 
-  ?sub_of_mid crm:P140i_was_attributed_by ?sub_of_mid_vr.
-  ?sub_of_mid_vr crm:P141_assigned ?sub_of_mid_rvi.
-  ?sub_of_mid_vr crm:P21_had_general_purpose <http://www.researchspace.org/resource/system/vocab/visual_recognition_purpose/Object_Annotation>.
+  ?sub_of_mid crm:P140i_was_attributed_by/crm:P141_assigned ?sub_of_mid_rvi.
   ?sub_of_mid_rvi a <http://murtenannotation.local/ver1/Recognized_VisualItem>.
 
 }
