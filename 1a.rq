@@ -1,0 +1,53 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+
+SELECT DISTINCT (?q2_sub_rvi as ?recognized_visual_item)  (MIN(?q1_ling_appl_content) as ?unique_content) (COUNT(?q1_frame_or_object) as ?count)  #count the occurence of query attributes in all frames or objects that showed the query recognized visualitem, 1 : attribute unique to the query frame, > 1 : common attribute
+WHERE {
+  BIND ( <http://www.researchspace.org/resource/recognized_visual_item/adc8e1a7-aea3-4542-ad36-36bc80449320> as ?q1_rvi) #query recognized visualitem i.e. "Traveling women who identify themselves as such are spared."
+
+      ?q1_vr crm:P141_assigned ?q1_rvi .
+      ?q1_vr crm:P140_assigned_attribute_to ?q1_frame.
+      ?q1_vr a <http://murtenannotation.local/ver1/Visual_Recognition>.
+
+      ?q1_framing crm:P141_assigned ?q1_frame.
+      ?q1_framing crm:P140_assigned_attribute_to  ?q1_frame_or_object.
+      ?q1_framing a <http://murtenannotation.local/ver1/Framing>.
+
+      ?q1_sub_framing crm:P141_assigned ?q1_sub_feature.
+      ?q1_sub_framing crm:P140_assigned_attribute_to ?q1_frame.
+      ?q1_sub_framing a <http://murtenannotation.local/ver1/Framing>.
+
+      ?q1_sub_vr crm:P141_assigned ?q2_sub_rvi.
+      ?q1_sub_vr crm:P140_assigned_attribute_to ?q1_sub_feature.
+      ?q1_sub_vr a <http://murtenannotation.local/ver1/Visual_Recognition>.
+
+      ?q1_appl_assg crm:P140_assigned_attribute_to ?q2_sub_rvi.
+      ?q1_appl_assg crm:P141_assigned ?q1_ling_appl.
+      ?q1_ling_appl crm:P72_has_language/skos:prefLabel "eng".
+      ?q1_ling_appl crm:P190_has_symbolic_content ?q1_ling_appl_content.
+      ?q1_appl_assg a <http://murtenannotation.local/ver1/Appellation_Assignment>.
+
+{
+SELECT DISTINCT ?q2_sub_rvi WHERE #select all the sub frame recognized visualitem (attributes) from the query frame => query attributes
+{
+  BIND ( <http://www.researchspace.org/resource/recognized_visual_item/adc8e1a7-aea3-4542-ad36-36bc80449320> as ?q2_rvi) #query recognized visualitem i.e. "Traveling women who identify themselves as such are spared."
+  BIND ( <http://www.researchspace.org/resource/man_made_object/79530dbc-f4fd-462e-b4bc-50f5b813010c/frame/c06bbc29-3995-4829-b248-91d805ae70b6> as ?q2_frame) #query frame (Murten Panorama)
+
+      ?q2_sub_framing crm:P141_assigned ?q2_sub_frame.
+      ?q2_sub_framing crm:P140_assigned_attribute_to ?q2_frame.
+      ?q2_sub_framing a <http://murtenannotation.local/ver1/Framing>.
+
+      ?q2_sub_vr crm:P141_assigned ?q2_sub_rvi.
+      ?q2_sub_vr crm:P140_assigned_attribute_to ?q2_sub_frame.
+      ?q2_sub_vr a <http://murtenannotation.local/ver1/Visual_Recognition>.
+
+}
+}
+
+
+}
+GROUP BY ?q2_sub_rvi
+HAVING (?count = 1)

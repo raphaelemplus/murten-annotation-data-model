@@ -1,0 +1,24 @@
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+SELECT  (COUNT(?mid) as ?level) (GROUP_CONCAT(?mid_rvi_ling_appl_content; separator="->") as ?content_agg) WHERE {
+  BIND ( <http://www.researchspace.org/resource/man_made_object/79530dbc-f4fd-462e-b4bc-50f5b813010c/frame/c06bbc29-3995-4829-b248-91d805ae70b6> as ?root_frame)
+
+  ?sub_of_mid (crm:P141i_was_assigned_by/crm:P140_assigned_attribute_to)* ?mid.
+  ?root_frame (crm:P140i_was_attributed_by/crm:P141_assigned)+ ?mid.
+
+  ?mid crm:P140i_was_attributed_by/crm:P141_assigned ?mid_rvi.
+  ?mid_rvi a <http://murtenannotation.local/ver1/Recognized_VisualItem>.
+
+  ?mid_rvi_appl_assg crm:P140_assigned_attribute_to ?mid_rvi.
+  ?mid_rvi_appl_assg crm:P141_assigned ?mid_rvi_ling_appl.
+  ?mid_rvi_ling_appl crm:P72_has_language/skos:prefLabel "eng".
+  ?mid_rvi_ling_appl crm:P190_has_symbolic_content ?mid_rvi_ling_appl_content.
+  ?mid_rvi_appl_assg a <http://murtenannotation.local/ver1/Appellation_Assignment>.
+
+  ?sub_of_mid crm:P140i_was_attributed_by ?sub_of_mid_vr.
+  ?sub_of_mid_vr crm:P141_assigned ?sub_of_mid_rvi.
+  ?sub_of_mid_vr crm:P21_had_general_purpose <http://www.researchspace.org/resource/system/vocab/visual_recognition_purpose/Object_Annotation>.
+  ?sub_of_mid_rvi a <http://murtenannotation.local/ver1/Recognized_VisualItem>.
+
+}
+GROUP BY (?sub_of_mid)
+HAVING (?level > 1)
